@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Ignore the maven shit ###
+.maven
+
+### ignore DB ###
+*.db
