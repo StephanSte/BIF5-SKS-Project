@@ -8,5 +8,4 @@ class BegzugApplication
 
 fun main(args: Array<String>) {
     runApplication<BegzugApplication>(*args)
-
 }
