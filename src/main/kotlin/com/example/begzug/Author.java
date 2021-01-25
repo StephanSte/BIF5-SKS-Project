@@ -1,13 +1,24 @@
 package com.example.begzug;
 
 import com.example.begzug.Article;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 @Entity // This tells Hibernate to make a table out of this class
 @Table(name = "Author")
 public class Author {
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "authorSequence")
+    @GenericGenerator(
+            name = "authorSequence",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "sequence_name", value = "authorSequence"),
+                    @org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
+                    @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
+            }
+    )
     @Column(name = "author_id")
     private Integer id;
     private String name;

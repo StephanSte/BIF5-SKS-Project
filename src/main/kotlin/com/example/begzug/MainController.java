@@ -1,8 +1,13 @@
 package com.example.begzug;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller // This means that this class is a Controller
 @RequestMapping(path="/demo") // This means URL's start with /demo (after Application path)
@@ -14,26 +19,22 @@ public class MainController {
     private ArticleRepository articleRepository;
 
     @GetMapping(path="/add") // Map ONLY POST Requests
-    public @ResponseBody
-    Author addNewUser (@RequestParam String name, @RequestParam String surname
-            , @RequestParam String email) {
+    public String addNewUser (@RequestParam String name, @RequestParam String surname
+            , @RequestParam String email, Model model) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
         Author n = new Author();
-        n.setId(1);
+        //n.setId(1);
         n.setName(name);
         n.setSurname(surname);
         n.setEmail(email);
 
-        return authorRepository.save(n);
+        authorRepository.save(n);
+        return getAllAuthors(model);
     }
 
-    @GetMapping(path="/")
-    public @ResponseBody Iterable<Author> getAllUsers() {
-        // This returns a JSON or XML with the users
-        return authorRepository.findAll();
-    }
+
 
     @PostMapping("/post")
     public void postCustomer(Author Author){
@@ -58,24 +59,78 @@ public class MainController {
 
         authorRepository.save(temp);
     }
-
+/*
     @DeleteMapping("/delete/{id}")
     public void deleteUserById(int id){
         authorRepository.deleteById(id);
-    }
+    }*/
 
 
-    @GetMapping("/addA")
-    public @ResponseBody Article addNewArticle (@RequestParam String title, @RequestParam String user) {
+    @PostMapping("/addA")
+    public String addNewArticle (@RequestParam String title, @RequestParam String author, @RequestParam String text, Model model) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
-
+        List<Author> searchResults = authorRepository.findByName(author);
         Article a = new Article();
-        a.setId(1);
+        System.out.println(text);
         a.setTitle(title);
-        a.setAuthor(authorRepository.findByName(user)[0]);
+        a.setText(text);
+        if (searchResults.size() < 1) {
+            return "failure.html";
+        }
+        a.setAuthor(authorRepository.findByName(author).get(0));
+        System.out.println(a.getText());
+        articleRepository.save(a);
 
-        //System.out.println(userRepository.findByName(user)[0].getName());
-        return articleRepository.save(a);
+        return getSingleArticle(model, a.getId());
     }
+
+    @GetMapping("/articles")
+    public String showAllArticles(Model model)
+    {
+        model.addAttribute("articles", articleRepository.findAll());
+        return "ArticleOverview";
+    }
+
+    @GetMapping(path="/allAuthors")
+    public String getAllAuthors(Model model) {
+        model.addAttribute("authors", authorRepository.findAll());
+        return "AllAuthors";
+    }
+
+    @GetMapping(path="/payment")
+    public String getAllClicks(@RequestParam("authorname") String authorName, Model model) {
+        System.out.println("Looking for " + authorName);
+        List<Author> searchResults = authorRepository.findByName(authorName);
+        if (searchResults.size() < 1) {
+            return "failure.html";
+        }
+        Author author = authorRepository.findByName(authorName).get(0);
+        List<Article> allArticles = articleRepository.findArticlesByAuthor(author);
+        System.out.println("List Count: " + allArticles.size());
+        model.addAttribute("author", author);
+        int sumOfClicks = 0;
+        for (Article art : allArticles) {
+            sumOfClicks += art.getClicks();
+        }
+        int eurosPaid = sumOfClicks / 100;
+        int centsPaid = sumOfClicks % 100;
+        model.addAttribute("euros", eurosPaid);
+        model.addAttribute("cents", centsPaid);
+        model.addAttribute("totalclicks", sumOfClicks);
+
+        return "Payment";
+    }
+
+    @GetMapping(path="/articleid")
+    public String getSingleArticle(Model model, @RequestParam("id") int id) {
+        model.addAttribute("article", articleRepository.findById(id));
+        // Life is beautiful.
+        Article ViewedArticle = articleRepository.findById(id);
+        ViewedArticle.setClicks(ViewedArticle.getClicks() + 1);
+        System.out.println("Clicks: " + ViewedArticle.getClicks());
+        articleRepository.save(ViewedArticle);
+        return "SingleArticle";
+    }
+
 }
