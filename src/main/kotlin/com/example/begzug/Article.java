@@ -27,6 +27,9 @@ public class Article {
     private Author author;
     private String text;
     private int clicks;
+    @ManyToOne
+    @JoinColumn(name = "sight_id")
+    private Sight sight;
 
 
     public int getId() {
@@ -66,5 +69,13 @@ public class Article {
 
     public void setClicks(int clicks) {
         this.clicks = clicks;
+    }
+
+    public Sight getSight() {
+        return sight;
+    }
+
+    public void setSight(Sight sight) {
+        this.sight = sight;
     }
 }

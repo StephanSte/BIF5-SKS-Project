@@ -17,6 +17,8 @@ public class MainController {
     private AuthorRepository authorRepository;
     @Autowired
     private ArticleRepository articleRepository;
+    @Autowired
+    private SightRepository sightRepository;
 
     @GetMapping(path="/add") // Map ONLY POST Requests
     public String addNewUser (@RequestParam String name, @RequestParam String surname
@@ -59,6 +61,13 @@ public class MainController {
 
         authorRepository.save(temp);
     }
+
+    @GetMapping("/writearticle")
+    public String writeArticle(Model model){
+        List<Sight> searchResults = sightRepository.findAll();
+        model.addAttribute("sights", searchResults);
+        return "Article";
+    }
 /*
     @DeleteMapping("/delete/{id}")
     public void deleteUserById(int id){
@@ -67,7 +76,7 @@ public class MainController {
 
 
     @PostMapping("/addA")
-    public String addNewArticle (@RequestParam String title, @RequestParam String author, @RequestParam String text, Model model) {
+    public String addNewArticle (@RequestParam String title, @RequestParam String author, @RequestParam String text, @RequestParam String sight, Model model) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
         List<Author> searchResults = authorRepository.findByName(author);
@@ -79,6 +88,7 @@ public class MainController {
             return "failure.html";
         }
         a.setAuthor(authorRepository.findByName(author).get(0));
+        a.setSight(sightRepository.findByName(sight).get(0));
         System.out.println(a.getText());
         articleRepository.save(a);
 
