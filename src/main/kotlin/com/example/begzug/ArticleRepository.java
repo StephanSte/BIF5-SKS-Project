@@ -10,4 +10,5 @@ import java.util.List;
 public interface ArticleRepository extends CrudRepository<Article, Integer> {
     Article findById(int id);
     List<Article> findArticlesByAuthor(Author author);
+    List<Article> findArticlesBySight(Sight sight);
 }

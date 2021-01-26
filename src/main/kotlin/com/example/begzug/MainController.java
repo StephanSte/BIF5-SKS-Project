@@ -9,10 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Controller // This means that this class is a Controller
@@ -76,12 +73,6 @@ public class MainController {
         model.addAttribute("sights", searchResults);
         return "Article";
     }
-/*
-    @DeleteMapping("/delete/{id}")
-    public void deleteUserById(int id){
-        authorRepository.deleteById(id);
-    }*/
-
 
     @PostMapping("/addA")
     public String addNewArticle (@RequestParam String title, @RequestParam String author, @RequestParam String text, @RequestParam String sight, Model model) {
@@ -92,6 +83,7 @@ public class MainController {
         System.out.println(text);
         a.setTitle(title);
         a.setText(text);
+        // clicks are automatically set to 0
         if (searchResults.size() < 1) {
             return "failure.html";
         }
@@ -146,11 +138,8 @@ public class MainController {
         // Life is beautiful.
         Article ViewedArticle = articleRepository.findById(id);
         ViewedArticle.setClicks(ViewedArticle.getClicks() + 1);
-        System.out.println("Clicks: " + ViewedArticle.getClicks());
+        ViewedArticle.setPendingClicks(ViewedArticle.getPendingClicks()+ 1);
         articleRepository.save(ViewedArticle);
-
-
-
 
         return "SingleArticle";
     }
@@ -163,21 +152,46 @@ public class MainController {
             List<Article> myArticles = articleRepository.findArticlesByAuthor(author);
             int amountToPay = 0;
             for (Article article : myArticles) {
-                int pendingClicks = article.getClicks() - article.getLastPaidClicks();
-                amountToPay += pendingClicks;
-                article.setLastPaidClicks(article.getClicks());
+                amountToPay += article.getPendingClicks();
+                article.setPendingClicks(0);
                 articleRepository.save(article);
-
-                String message = author.getName() + " " + amountToPay;
-                kafkaTemplate.send("payment", message);
             }
+            if (amountToPay == 0)
+                continue;
             amountsToPay.put(author, amountToPay);
+            String message = author.getName() + " " + amountToPay;
+            kafkaTemplate.send("payment", message);
         }
 
 
         model.addAttribute("authors", amountsToPay);
 
         return "PaymentResult";
+    }
+
+    @GetMapping("/sights")
+    public String getSightStatistics(Model model) {
+        List<Sight> allSights = sightRepository.findAll();
+        Map<Sight, Integer> sightClicks = new HashMap<>();
+        Map<Sight, Integer> unpaidSightClicks = new HashMap<>();
+        for (Sight sight : allSights)
+        {
+            List<Article> sightArticles = articleRepository.findArticlesBySight(sight);
+            int totalClicks = 0;
+            int totalUnpaidClicks = 0;
+            for (Article article : sightArticles) {
+                totalClicks += article.getClicks();
+                totalUnpaidClicks += article.getPendingClicks();
+            }
+
+            sightClicks.put(sight, totalClicks);
+            unpaidSightClicks.put(sight, totalUnpaidClicks);
+        }
+
+        model.addAttribute("sightclicks", sightClicks);
+        model.addAttribute("unpaidsightclicks", unpaidSightClicks);
+
+        return "SightStatistic";
     }
 
 }

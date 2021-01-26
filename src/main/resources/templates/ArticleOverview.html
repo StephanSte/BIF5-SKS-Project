@@ -6,7 +6,7 @@
         <th>Author</th>
         <th>Clicks</th>
         <th>Sight</th>
-        <th>Last Paid Click Count</th>
+        <th>MonthlyClicks</th>
     </tr>
     </thead>
     <tbody>
@@ -16,7 +16,7 @@
         <td th:text="${article.author.name}"></td>
         <td th:text="${article.clicks}"></td>
         <td th:text="${article.sight.name}"></td>
-        <td th:text="${article.lastPaidClicks}"></td>
+        <td th:text="${article.pendingClicks}"></td>
     </tr>
     </tbody>
 </table>

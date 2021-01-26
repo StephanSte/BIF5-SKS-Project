@@ -27,7 +27,7 @@ public class Article {
     private Author author;
     private String text;
     private int clicks;
-    private int lastPaidClicks;
+    private int pendingClicks;
     @ManyToOne
     @JoinColumn(name = "sight_id")
     private Sight sight;
@@ -80,11 +80,11 @@ public class Article {
         this.sight = sight;
     }
 
-    public int getLastPaidClicks() {
-        return lastPaidClicks;
+    public int getPendingClicks() {
+        return pendingClicks;
     }
 
-    public void setLastPaidClicks(int lastPaidClicks) {
-        this.lastPaidClicks = lastPaidClicks;
+    public void setPendingClicks(int pendingClicks) {
+        this.pendingClicks = pendingClicks;
     }
 }

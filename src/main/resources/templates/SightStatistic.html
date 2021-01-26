@@ -1,0 +1,36 @@
+<table>
+    <thead>
+    <tr>
+        <th>Sight</th>
+        <th>State</th>
+        <th>Total Clicks</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="sight : ${sightclicks}">
+        <td th:text="${sight.key.name}"></td>
+        <td th:text="${sight.key.state}"></td>
+        <td th:text="${sight.value}"></td>
+    </tr>
+    </tbody>
+</table>
+<br>
+<table>
+    <thead>
+    <tr>
+        <th>Sight</th>
+        <th>State</th>
+        <th>Monthly Clickerinos</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="sight : ${unpaidsightclicks}">
+        <td th:text="${sight.key.name}"></td>
+        <td th:text="${sight.key.state}"></td>
+        <td th:text="${sight.value}"></td>
+    </tr>
+    </tbody>
+</table>
+<form action="/" method="get">
+    <input type="submit" value="Return to index">
+</form>
