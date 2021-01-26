@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface AuthorRepository extends CrudRepository<Author, Integer> {
     List<Author> findByName(String name);
+    List<Author> findAll();
 }

@@ -3,11 +3,17 @@ package com.example.begzug;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 @Controller // This means that this class is a Controller
 @RequestMapping(path="/demo") // This means URL's start with /demo (after Application path)
@@ -20,6 +26,9 @@ public class MainController {
     @Autowired
     private SightRepository sightRepository;
 
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
     @GetMapping(path="/add") // Map ONLY POST Requests
     public String addNewUser (@RequestParam String name, @RequestParam String surname
             , @RequestParam String email, Model model) {
@@ -27,7 +36,6 @@ public class MainController {
         // @RequestParam means it is a parameter from the GET or POST request
 
         Author n = new Author();
-        //n.setId(1);
         n.setName(name);
         n.setSurname(surname);
         n.setEmail(email);
@@ -140,7 +148,36 @@ public class MainController {
         ViewedArticle.setClicks(ViewedArticle.getClicks() + 1);
         System.out.println("Clicks: " + ViewedArticle.getClicks());
         articleRepository.save(ViewedArticle);
+
+
+
+
         return "SingleArticle";
+    }
+
+    @GetMapping(path="/payauthors")
+    public String payAuthors(Model model) {
+        List<Author> allAuthors = authorRepository.findAll();
+        Map<Author,Integer> amountsToPay = new HashMap<>();
+        for (Author author : allAuthors) {
+            List<Article> myArticles = articleRepository.findArticlesByAuthor(author);
+            int amountToPay = 0;
+            for (Article article : myArticles) {
+                int pendingClicks = article.getClicks() - article.getLastPaidClicks();
+                amountToPay += pendingClicks;
+                article.setLastPaidClicks(article.getClicks());
+                articleRepository.save(article);
+
+                String message = author.getName() + " " + amountToPay;
+                kafkaTemplate.send("payment", message);
+            }
+            amountsToPay.put(author, amountToPay);
+        }
+
+
+        model.addAttribute("authors", amountsToPay);
+
+        return "PaymentResult";
     }
 
 }

@@ -1,0 +1,17 @@
+<table>
+    <thead>
+    <tr>
+        <th>Author</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="author : ${authors}">
+        <td th:text="${author.key.name}"></td>
+        <td th:text="${author.value}"></td>
+
+    </tr>
+    </tbody>
+</table>
+<form action="/" method="get">
+    <input type="submit" value="Return to index">
+</form>
