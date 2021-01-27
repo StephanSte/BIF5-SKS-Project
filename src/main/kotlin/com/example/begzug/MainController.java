@@ -64,7 +64,7 @@ public class MainController {
         a.setText(text);
         // clicks are automatically set to 0
         if (searchResults.size() < 1) {
-            return "failure.html";
+            return "failure";
         }
         a.setAuthor(authorRepository.findByName(author).get(0));
         a.setSight(sightRepository.findByName(sight).get(0));
@@ -101,7 +101,7 @@ public class MainController {
         System.out.println("Looking for " + authorName);
         List<Author> searchResults = authorRepository.findByName(authorName);
         if (searchResults.size() < 1) {
-            return "failure.html";
+            return "failure";
         }
         Author author = authorRepository.findByName(authorName).get(0);
         List<Article> allArticles = articleRepository.findArticlesByAuthor(author);
