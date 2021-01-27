@@ -5,12 +5,12 @@
     <title>Das ist ein schöner Titel</title>
 </head>
 <body>
-Klicke <a href = "./demo/allAuthors">hier</a> drauf um alle user zu sehen. <br>
-Klicke <a href = "./demo/writearticle">hier</a> drauf um einen neuen Artikel einzufuegen. <br>
-Klicke <a href = "./demo/articles">hier</a> drauf um alle Artikel zu sehen. <br>
-Klicke <a href = "./demo/payauthors">hier</a> drauf um alle Autoren zu bezahlen. <br>
-Klicke <a href = "./demo/sights">hier</a> drauf um eine Übersicht über Klicks und Sehenswürdigkeiten zu bekommen. <br><br>
-<form action="./demo/payment" method="get">
+Klicke <a href = "./api/allAuthors">hier</a> drauf um alle user zu sehen. <br>
+Klicke <a href = "./api/writearticle">hier</a> drauf um einen neuen Artikel einzufuegen. <br>
+Klicke <a href = "./api/articles">hier</a> drauf um alle Artikel zu sehen. <br>
+Klicke <a href = "./api/payauthors">hier</a> drauf um alle Autoren zu bezahlen. <br>
+Klicke <a href = "./api/sights">hier</a> drauf um eine Übersicht über Klicks und Sehenswürdigkeiten zu bekommen. <br><br>
+<form action="./api/payment" method="get">
     <label for="authorname">Name:</label>
     <input type="text" id = "authorname" name = "authorname">
     <input type="submit" value="submit">
@@ -18,7 +18,7 @@ Klicke <a href = "./demo/sights">hier</a> drauf um eine Übersicht über Klicks 
 
 
 <br><br><br>
-<form action="/demo/add" method="get">
+<form action="/api/add" method="post">
     <label for="email">email:</label>
     <input type="text" id="email" name="email"><br><br>
     <label for="name">Vorname:</label>

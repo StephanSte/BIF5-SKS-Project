@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Das ist ein schöner Titel</title>
-</head>
-<body>
-<form action="/demo/addA" method="post" id="createform">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<form action="/api/addA" method="post" id="createform">
     <label for="title">Title:</label>
     <input type="text" id="title" name="title"><br><br>
     <label for="author">Author:</label>
@@ -16,6 +11,7 @@
     <input type="submit" value="Submit">
 </form>
 
+<label for="sight">Sight: </label>
 <select name="sight" id="sight" form="createform">
     <option th:each="sight : ${sights}" th:value="${sight.name}" th:text="${sight.name}"></option>
 </select>
@@ -25,5 +21,3 @@
 <form action="/" method="get">
     <input type="submit" value="Return to index">
 </form>
-</body>
-</html>

@@ -1,6 +1,5 @@
 package com.example.begzug;
 
-import com.example.begzug.Article;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;

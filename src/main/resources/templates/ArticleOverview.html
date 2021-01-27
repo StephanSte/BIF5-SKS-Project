@@ -1,3 +1,6 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
 <table>
     <thead>
     <tr>
@@ -11,7 +14,7 @@
     </thead>
     <tbody>
     <tr th:each="article : ${articles}">
-        <td><a th:href="|@{articleid(id=${article.id})}|"><div th:text="${article.id}"></a></td>
+        <td><a th:href="@{articleid(id=${article.id})}"><div th:text="${article.id}"></div></a></td>
         <td th:text="${article.title}"></td>
         <td th:text="${article.author.name}"></td>
         <td th:text="${article.clicks}"></td>
